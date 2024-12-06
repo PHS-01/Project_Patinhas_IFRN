@@ -51,7 +51,12 @@
                     transform: translate(-50%, -20px);
                 }
             }
-    
+
+            /* Animação de saída (slide para cima) */
+            .animate-slide-up {
+                animation: slideUp 0.5s ease-out forwards;
+            }
+
             /* Alinha o botão de fechar */
             #success-alert .btn-close {
                 position: absolute;
@@ -60,119 +65,73 @@
             }
 
 
-            .img-fluid-custom {
-                width: 100%;
-                height: auto;
-            }
-
-            .img-round {
-                width: 80px;
-                height: 80px;
-                border-radius: 50%;
-                object-fit: cover;
-            }
-
-            .card-custom {
-                border: 1px solid #ddd;
-                padding: 15px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-
-            .title {
-                font-size: 2.5rem;
-                font-weight: bold;
-            }
-
-            .subtitle {
-                font-size: 1.2rem;
-                color: gray;
-            }
-
-            /* Estilo para o menu (checkboxes) */
-            .menu-checkbox {
-                padding: 20px;
-                border-right: 1px solid #ddd;
-                height: 100%;
-                position: sticky;
-                top: 0;
-            }
-
-            .menu-checkbox input {
-                margin-right: 10px;
-            }
-
-            /* Responsividade */
-            @media (max-width: 768px) {
-                .menu-checkbox {
-                    padding: 10px;
-                }
-            }
-
-
-            
-            .arrow-back {
-                font-size: 1.5rem;
-                position: absolute;
-                top: 20px;
-                left: 20px;
-                color: #007bff;
-                cursor: pointer;
-                text-decoration: none;
-            }
-
-            .arrow-back:hover {
-                color: #0056b3;
-            }
-
-            .card-custom {
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                border: none;
-                border-radius: 10px;
-                overflow: hidden;
-            }
-
-            .card-img {
+            /* Estilo do botão flutuante */
+            .btn-floating {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
                 display: flex;
+                align-items: center;
                 justify-content: center;
-                align-items: center;
-                height: 100%;
-                background-color: #f8f9fa;
+                background-color: rgb(185, 184, 184); /* Cor azul padrão do Bootstrap */
+                color: #fff;
+                border-radius: 50px;
+                height: 50px;
+                width: 50px;
+                transition: width 0.3s ease, background-color 0.3s ease;
+                overflow: hidden;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                z-index: 1050; /* Mantém o alerta sobre outros elementos */
             }
 
-            .card-img img {
-                max-width: 100%;
-                max-height: 200px;
-                border-radius: 50%;
+            .btn-floating:hover {
+                width: 150px; /* Expande para mostrar o texto */
+                background-color: gray; /* Cor mais escura ao passar o mouse */
             }
 
-            .card-content {
-                padding: 20px;
+            .btn-floating svg {
+                flex-shrink: 0;
+                transition: transform 0.3s ease;
             }
 
-            .title {
-                font-size: 1.5rem;
-                font-weight: bold;
+            .btn-floating span {
+                white-space: nowrap;
+                opacity: 0; /* Texto invisível inicialmente */
+                margin-left: 10px;
+                transition: opacity 0.3s ease;
             }
 
-            .edit-btn {
-                margin-left: auto;
-                padding: 5px 10px;
+            .btn-floating:hover span {
+                opacity: 1; /* Mostra o texto no hover */
             }
 
-            .info-row {
-                display: flex;
-                align-items: center;
-                margin-bottom: 15px;
+            .btn-floating:hover svg {
+                transform: rotate(360deg); /* Gira o ícone ao passar o mouse */
             }
         </style>
+
+        @yield('style')
     </head>
     <body>
-        <!-- Alerta de Sucesso -->
         @if(session('success'))
             <div id="success-alert" class="alert alert-dismissible fade show text-center" role="alert">
                 {{ session('success') }}
             </div>
         @endif
+
+        @auth
+            @if (Auth::user()->type == 'admin')
+                <!-- Botão flutuante -->
+                <a href="#" style="color: white" class="link-underline link-underline-opacity-0">
+                    <div class="btn-floating">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 -960 960 960" width="25" fill="#ffffff">
+                            <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+                        </svg>
+                        <span>Mensagem</span>
+                    </div>
+                </a>
+            @endif
+        @endauth
 
         <header>
             <!-- Navbar -->
@@ -192,18 +151,28 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav ms-2 me-auto mb-lg-0">
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/pet')}}">Lista de Pets</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/about')}}">Sobre</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="#">Link</a>
                             </li>
                         </ul>
 
                         <!-- Botões de informações (alinhados à direita) -->
                         <div class="d-flex">
-                            <button class="btn btn-outline-secondary me-2" type="button">Login</button>
-                            <button class="btn btn-outline-secondary" type="button">Cadastrar</button>
-                            <a href="#" style="color: black" class="link-underline link-underline-opacity-0 ms-2">
-                                Name
-                                <svg class="ms-1" xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" width="35" fill="#000000"><path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/></svg>
-                            </a>
+                            @guest
+                                <button class="btn btn-outline-secondary me-2" type="button">Login</button>
+                                <button class="btn btn-outline-secondary" type="button">Cadastrar</button>
+                            @endguest
+                            @auth
+                                <a href="#" style="color: black" class="link-underline link-underline-opacity-0 ms-2">
+                                    {{ Auth::user()->name }}
+                                    <svg class="ms-1" xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" width="35" fill="#000000"><path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/></svg>
+                                </a>
+                            @endauth
                         </div>
                     </div>
                 </div>
@@ -211,158 +180,7 @@
         </header>
 
         <main class="container">
-            {{-- @yield('content', 'Aqui vai ficar os conteudos do main') --}}
-            <section class="my-5">
-                <div class="container my-5 position-relative">
-                    <!-- Seta de Voltar -->
-                    <a href="#" class="arrow-back">
-                        &larr; Voltar
-                    </a>
-                
-                    <!-- Card -->
-                    <div class="card card-custom">
-                        <div class="row g-0">
-                            <!-- Primeira Coluna (Imagem) -->
-                            <div class="col-md-4 card-img">
-                                <img src="https://via.placeholder.com/150" alt="Foto">
-                            </div>
-                
-                            <!-- Segunda Coluna (Títulos e Botões de Edição) -->
-                            <div class="col-md-8">
-                                <div class="card-content">
-                                    <!-- Linha de Informação 1 -->
-                                    <div class="info-row">
-                                        <span class="title">Nome do Usuário</span>
-                                        <button class="btn btn-primary edit-btn">Editar</button>
-                                    </div>
-                
-                                    <!-- Linha de Informação 2 -->
-                                    <div class="info-row">
-                                        <span class="title">Email do Usuário</span>
-                                        <button class="btn btn-primary edit-btn">Editar</button>
-                                    </div>
-                
-                                    <!-- Linha de Informação 3 -->
-                                    <div class="info-row">
-                                        <span class="title">Telefone</span>
-                                        <button class="btn btn-primary edit-btn">Editar</button>
-                                    </div>
-                
-                                    <!-- Linha de Informação 4 -->
-                                    <div class="info-row">
-                                        <span class="title">Endereço</span>
-                                        <button class="btn btn-primary edit-btn">Editar</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>                
-            </section>
-            <section class="my-5">
-                <div class="row">
-                    <!-- Primeira Coluna (Maior) -->
-                    <div class="col-lg-8">
-                        <h1 class="title">Sobre Nossa Empresa</h1>
-                        <p>
-                            Nossa empresa tem o compromisso de fornecer os melhores serviços e produtos aos nossos clientes. Com mais de 20 anos de experiência, nossa missão é oferecer soluções inovadoras e de alta qualidade, sempre com foco nas necessidades dos nossos usuários.
-                        </p>
-                        <img src="https://via.placeholder.com/800x400" alt="Imagem sobre a empresa" class="img-fluid-custom">
-                    </div>
-            
-                    <!-- Segunda Coluna (Menor) -->
-                    <div class="col-lg-4">
-                        <div class="card card-custom">
-                            <div class="d-flex align-items-center">
-                                <img src="https://via.placeholder.com/80" alt="Foto de perfil" class="img-round">
-                                <div class="ms-3">
-                                    <h4 class="title mb-1">João Silva</h4>
-                                    <p class="subtitle mb-0">CEO e Fundador</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section class="container-fluid my-5 w-100">
-                <div class="row">
-                    <!-- Primeira Coluna (Menor) - Menu com Checkboxes -->
-                    <div class="col-lg-3 col-md-4 col-12 menu-checkbox">
-                        <h3>Filtros</h3>
-                        <div>
-                            <div class="mb-3">
-                                <input type="checkbox" id="option1" value="option1">
-                                <label for="option1">Opção 1</label>
-                            </div>
-                            <div class="mb-3">
-                                <input type="checkbox" id="option2" value="option2">
-                                <label for="option2">Opção 2</label>
-                            </div>
-                            <div class="mb-3">
-                                <input type="checkbox" id="option3" value="option3">
-                                <label for="option3">Opção 3</label>
-                            </div>
-                            <div class="mb-3">
-                                <input type="checkbox" id="option4" value="option4">
-                                <label for="option4">Opção 4</label>
-                            </div>
-                        </div>
-                    </div>
-            
-                    <!-- Segunda Coluna (Maior) - Grid com Cards -->
-                    <div class="col-lg-9 col-md-8 col-12">
-                        <div class="row g-4">
-                            <!-- Card 1 -->
-                            <div class="col-md-4 col-12">
-                                <div class="card card-custom">
-                                    <img src="https://via.placeholder.com/350x200?text=Imagem+1" class="card-image" alt="Imagem 1">
-                                    <div class="card-body">
-                                        <h5 class="title">Título do Card 1</h5>
-                                        <p class="subtitle">Subtítulo do Card 1</p>
-                                        <a href="#" class="btn btn-primary">Saiba mais</a>
-                                    </div>
-                                </div>
-                            </div>
-            
-                            <!-- Card 2 -->
-                            <div class="col-md-4 col-12">
-                                <div class="card card-custom">
-                                    <img src="https://via.placeholder.com/350x200?text=Imagem+2" class="card-image" alt="Imagem 2">
-                                    <div class="card-body">
-                                        <h5 class="title">Título do Card 2</h5>
-                                        <p class="subtitle">Subtítulo do Card 2</p>
-                                        <a href="#" class="btn btn-primary">Saiba mais</a>
-                                    </div>
-                                </div>
-                            </div>
-            
-                            <!-- Card 3 -->
-                            <div class="col-md-4 col-12">
-                                <div class="card card-custom">
-                                    <img src="https://via.placeholder.com/350x200?text=Imagem+3" class="card-image" alt="Imagem 3">
-                                    <div class="card-body">
-                                        <h5 class="title">Título do Card 3</h5>
-                                        <p class="subtitle">Subtítulo do Card 3</p>
-                                        <a href="#" class="btn btn-primary">Saiba mais</a>
-                                    </div>
-                                </div>
-                            </div>
-            
-                            <!-- Card 4 -->
-                            <div class="col-md-4 col-12">
-                                <div class="card card-custom">
-                                    <img src="https://via.placeholder.com/350x200?text=Imagem+4" class="card-image" alt="Imagem 4">
-                                    <div class="card-body">
-                                        <h5 class="title">Título do Card 4</h5>
-                                        <p class="subtitle">Subtítulo do Card 4</p>
-                                        <a href="#" class="btn btn-primary">Saiba mais</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            @yield('content', 'Aqui vai ficar os conteudos do main')
         </main>
 
         <footer class="text-bg-secondary text-center py-4">
@@ -388,8 +206,21 @@
             </div>
         </footer>
 
+        <script>
+            // Fechar automaticamente o alerta após 5 segundos
+            const successAlert = document.getElementById('success-alert');
+            if (successAlert) {
+                setTimeout(() => {
+                    successAlert.classList.add('animate-slide-up'); // Adiciona a classe de animação
+                    setTimeout(() => successAlert.remove(), 500); // Remove o alerta do DOM após a animação
+                }, 5000); // Aguarda 5 segundos antes de começar
+            }
+        </script>
+
         <!-- CDN do Bootstrap 5 JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        
+            @yield('script')
     </body>
 </html>
