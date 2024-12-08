@@ -32,7 +32,17 @@ class PetController extends Controller
     public function store(Request $request)
     {
         //
-        Pet::create($request->all());
+        Pet::create([
+            'image' => $request->image,
+            'name' => $request->name,
+            'age' => $request->age,
+            'breed' => $request->breed,
+            'description' => $request->description,
+            'health_status' => $request->health_status,
+            'size' => $request->size,
+            'gender' => $request->gender,
+            'available_for_adoption' => true,
+        ]);
 
         return redirect('/dashboard')->with('success', 'Pet criado com sucesso!');
     }
@@ -60,18 +70,14 @@ class PetController extends Controller
      */
     public function update(Request $request, Pet $pet)
     {
-        //
-        $pet->update([
-            'image' => $request->filled('image') ? $request->image : $pet->image,
-            'name' => $request->filled('name') ? $request->name : $pet->name,
-            'age' => $request->filled('age') ? $request->age : $pet->age,
-            'breed' => $request->filled('breed') ? $request->breed : $pet->breed,
-            'description' => $request->filled('description') ? $request->description : $pet->description,
-            'health_status' => $request->filled('health_status') ? $request->health_status : $pet->health_status,
-            'size' => $request->filled('size') ? $request->size : $pet->size,
-            'gender' => $request->filled('gender') ? $request->gender : $pet->gender,
-            'available_for_adoption' => $request->filled('available_for_adoption') ? $request->available_for_adoption : $pet->available_for_adoption,
-        ]);
+        // Filtrar os valores preenchidos na requisição
+        $data = array_filter($request->only([
+            'image', 'name', 'age', 'breed', 'description', 
+            'health_status', 'size', 'gender', 'available_for_adoption'
+        ]));
+
+        // Atualizar apenas os campos fornecidos
+        $pet->update($data);
 
         return back()->with('success', 'Pet editado com sucesso!');
     }

@@ -6,18 +6,19 @@ use Illuminate\Support\Facades\Route;
 
 // Rotas do Layouts
 Route::view('/layouts/app', 'layouts.app');
+Route::view('/layouts/form', 'layouts.form');
+
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['guest'])->name('dashboard');
 
 Route::view('/about', 'about');
 
-Route::prefix('/pet')->controller(PetController::class)->middleware('auth')->group(function () {
+Route::prefix('/pet')->controller(PetController::class)->middleware('guest')->group(function () {
     Route::get('', 'index'); 
     Route::get('/create', 'create')->middleware([IsAdmin::class]); 
     Route::post('/create', 'store')->middleware([IsAdmin::class]); 

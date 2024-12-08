@@ -122,12 +122,12 @@
         @auth
             @if (Auth::user()->type == 'admin')
                 <!-- Botão flutuante -->
-                <a href="#" style="color: white" class="link-underline link-underline-opacity-0">
+                <a href="{{ url('/pet/create/') }}" style="color: white" class="link-underline link-underline-opacity-0">
                     <div class="btn-floating">
                         <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 -960 960 960" width="25" fill="#ffffff">
                             <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
                         </svg>
-                        <span>Mensagem</span>
+                        <span class="me-2">Cadastrar Pet</span>
                     </div>
                 </a>
             @endif
@@ -138,7 +138,7 @@
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
                     <!-- Logo (alinhado à esquerda) -->
-                    <a class="navbar-brand m-0 p-0 d-flex" href="#">
+                    <a class="navbar-brand m-0 p-0 d-flex" href="{{ url('/') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" width="35" fill="#000000"><path d="M180-475q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm180-160q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm240 0q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm180 160q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM266-75q-45 0-75.5-34.5T160-191q0-52 35.5-91t70.5-77q29-31 50-67.5t50-68.5q22-26 51-43t63-17q34 0 63 16t51 42q28 32 49.5 69t50.5 69q35 38 70.5 77t35.5 91q0 47-30.5 81.5T694-75q-54 0-107-9t-107-9q-54 0-107 9t-107 9Z"/></svg>
                     </a>
 
@@ -164,8 +164,8 @@
                         <!-- Botões de informações (alinhados à direita) -->
                         <div class="d-flex">
                             @guest
-                                <button class="btn btn-outline-secondary me-2" type="button">Login</button>
-                                <button class="btn btn-outline-secondary" type="button">Cadastrar</button>
+                                <a href="{{ route('login') }}" class="btn btn-outline-secondary me-2">Login</a>
+                                <a href="{{ route('register') }}" class="btn btn-outline-secondary">Cadastrar</a>                            
                             @endguest
                             @auth
                                 <a href="#" style="color: black" class="link-underline link-underline-opacity-0 ms-2">

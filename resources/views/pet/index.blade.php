@@ -18,8 +18,10 @@
         }
 
         .card-image {
-            height: 200px;
-            object-fit: cover;
+            height: 200px; /* Altura fixa do contêiner */
+            width: 100%; /* Largura total do contêiner */
+            object-fit: cover; /* Garante que a imagem preencha o espaço sem distorção */
+            object-position: center; /* Centraliza a imagem dentro do contêiner */
         }
 
         .card-body {

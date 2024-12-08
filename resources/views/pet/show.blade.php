@@ -1,6 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.form')
 
 @section('title', 'Informações')
+
+@section('url')
+    {{ url('/pet') }}
+@endsection
 
 @section('style')
     <style>
@@ -55,16 +59,29 @@
         .edit-btn {
             padding: 5px 10px;
         }
+
+        #btn-relative {
+            position: absolute;
+            top: 3vh; /* Ajuste a distância do topo conforme necessário */
+            left: 5vh; /* Ajuste a distância da borda direita conforme necessário */
+            z-index: 10; /* Garantir que o botão fique acima da imagem */
+        }
     </style>
 @endsection
 
 @section('content')
-    <section>
-        <div class="container my-5 position-relative">
+    <section style="margin-top: 10%; margin-bottom: 10%;">
+        <div class="container position-relative">
             <!-- Card de Informações -->
             <div class="info-card">
                 <!-- Coluna da Foto -->
                 <div class="info-photo">
+                    @auth
+                        @if (Auth::user()->type == 'admin')
+                            <button id="btn-relative" class="btn btn-primary edit-btn" data-bs-toggle="modal" data-bs-target="#editModal-image"
+                                data-field="image" data-value="{{ $pet->image }}">{{ __('Editar') }}</button>
+                        @endif
+                    @endauth
                     <img src="{{ $pet->image }}" alt="Foto do Pet">
                 </div>
 
@@ -84,99 +101,118 @@
                             <div>
                                 <span class="info-title">{{ $label }}</span>
                                 <div class="info-value" id="value-{{ $field }}">
-                                    {{ $pet->$field ?? 'Não informado' }}
+                                    @switch($field)
+                                        @case('available_for_adoption')
+                                            {{ $pet->$field == 1 ? 'Sim' : ($pet->$field == 0 ? 'Não' : ($pet->$field ?? 'Não informado')) }}
+                                            @break
+                                        @case('gender')
+                                            {{ $pet->$field == 'Male' ? 'Macho' : ($pet->$field == 'Female' ? 'Fêmea' : ($pet->$field ?? 'Não informado')) }}
+                                            @break
+                                        @case('size')
+                                            {{ $pet->$field == 'Small' ? 'Pequeno' : ($pet->$field == 'Medium' ? 'Médio' : ($pet->$field == 'Large' ? 'Grande' : ($pet->$field ?? 'Não informado'))) }}
+                                            @break
+                                        @default
+                                            {{ $pet->$field ?? 'Não informado' }}
+                                    @endswitch
                                 </div>
                             </div>
-                            <button class="btn btn-primary edit-btn" data-bs-toggle="modal" data-bs-target="#editModal"
-                                data-field="{{ $field }}" data-value="{{ $pet->$field }}">{{ __('Editar') }}</button>
+                            @auth
+                                @if (Auth::user()->type == 'admin')
+                                    <button class="btn btn-primary edit-btn" data-bs-toggle="modal" data-bs-target="#editModal-{{ $field }}"
+                                        data-field="{{ $field }}" data-value="{{ $pet->$field }}">{{ __('Editar') }}</button>
+                                @endif
+                            @endauth
                         </div>
                     @endforeach
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Modal de Edição -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Editar Informação</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    @auth
+        @if (Auth::user()->type == 'admin')
+            <!-- Modal para a edição -->
+            @foreach ([
+                'image' => 'Imagem',
+                'name' => 'Nome',
+                'age' => 'Idade',
+                'breed' => 'Raça',
+                'description' => 'Descrição',
+                'health_status' => 'Estado de Saúde',
+                'size' => 'Tamanho',
+                'gender' => 'Gênero',
+                'available_for_adoption' => 'Disponível para Adoção',
+            ] as $field => $label)
+                <div class="modal fade" id="editModal-{{ $field }}" tabindex="-1"
+                    aria-labelledby="editModalLabel-{{ $field }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form action="{{ url('/pet/update/' . $pet->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel-{{ $field }}">Editar {{ $label }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        @switch($field)
+                                            @case('size')
+                                                <label for="{{ $field }}" class="form-label">{{ $label }}</label>
+                                                <select id="{{ $field }}" name="{{ $field }}" class="form-select">
+                                                    <option selected disabled>{{ $pet->$field == 'Small' ? 'Pequeno' : ($pet->$field == 'Medium' ? 'Médio' : 'Grande') }}</option>
+                                                    <option value="Small">Pequeno</option>
+                                                    <option value="Medium">Médio</option>
+                                                    <option value="Large">Grande</option>
+                                                </select>
+                                                @break
+                                            @case('gender')
+                                                <label for="{{ $field }}" class="form-label">{{ $label }}</label>
+                                                <select id="{{ $field }}" name="{{ $field }}" class="form-select">
+                                                    <option selected disabled>{{ $pet->$field == 'Male' ? 'Macho' : 'Fêmea' }}</option>
+                                                    <option value="Male">Macho</option>
+                                                    <option value="Female">Fêmea</option>
+                                                </select>
+                                                @break
+                                            @case('available_for_adoption')
+                                                <label for="{{ $field }}" class="form-label">{{ $label }}</label>
+                                                <select id="{{ $field }}" name="{{ $field }}" class="form-select">
+                                                    <option selected disabled>{{ $pet->$field == 1 ? 'Sim' : 'Não' }}</option>
+                                                    <option value="1">Sim</option>
+                                                    <option value="0">Não</option>
+                                                </select>
+                                                @break
+                                            @default
+                                                <label for="{{ $field }}" class="form-label">{{ $label }}</label>
+                                                <input type="{{ $field == 'age' ? 'number' : 'text' }}" class="form-control" id="{{ $field }}"
+                                                    name="{{ $field }}" value="{{ $pet->$field }}" required>     
+                                        @endswitch
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Salvar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <form id="editForm" action="{{ url('/pet/update/'.$pet->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="mb-3">
-                            <label id="editLabel" for="editInput" class="form-label"></label>
-
-                            <!-- Input de texto padrão -->
-                            <input type="text" class="form-control d-none" id="editInput" name="value">
-
-                            <!-- Select para opções predefinidas -->
-                            <select class="form-select d-none" id="editSelect" name="value">
-                                <!-- Opções dinâmicas preenchidas via JavaScript -->
-                            </select>
-
-                            <input type="hidden" id="editField" name="field">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" form="editForm">Salvar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+            @endforeach
+        @endif
+    @endauth
 @endsection
 
 @section('script')
     <script>
-        const editModal = document.getElementById('editModal');
-        editModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            const field = button.getAttribute('data-field');
-            const currentValue = button.getAttribute('data-value');
-            const label = button.parentElement.querySelector('.info-title').innerText;
-
-            const modalLabel = editModal.querySelector('#editLabel');
-            const modalInput = editModal.querySelector('#editInput');
-            const modalSelect = editModal.querySelector('#editSelect');
-            const modalField = editModal.querySelector('#editField');
-
-            modalLabel.textContent = label;
-            modalField.value = field;
-
-            // Configurações específicas para campos de seleção
-            if (field === 'size') {
-                modalInput.classList.add('d-none');
-                modalSelect.classList.remove('d-none');
-                modalSelect.innerHTML = `
-                    <option value="Small" ${currentValue === 'Small' ? 'selected' : ''}>Pequeno</option>
-                    <option value="Medium" ${currentValue === 'Medium' ? 'selected' : ''}>Médio</option>
-                    <option value="Large" ${currentValue === 'Large' ? 'selected' : ''}>Grande</option>
-                `;
-            } else if (field === 'gender') {
-                modalInput.classList.add('d-none');
-                modalSelect.classList.remove('d-none');
-                modalSelect.innerHTML = `
-                    <option value="Male" ${currentValue === 'Male' ? 'selected' : ''}>Masculino</option>
-                    <option value="Female" ${currentValue === 'Female' ? 'selected' : ''}>Feminino</option>
-                `;
-            } else if (field === 'available_for_adoption') {
-                modalInput.classList.add('d-none');
-                modalSelect.classList.remove('d-none');
-                modalSelect.innerHTML = `
-                    <option value="1" ${currentValue == '1' ? 'selected' : ''}>Sim</option>
-                    <option value="0" ${currentValue == '0' ? 'selected' : ''}>Não</option>
-                `;
-            } else {
-                modalInput.classList.remove('d-none');
-                modalSelect.classList.add('d-none');
-                modalInput.value = currentValue || '';
-            }
+        // Exemplo de script se necessário adicionar lógica aos modais
+        document.addEventListener('DOMContentLoaded', function () {
+            const modals = document.querySelectorAll('.edit-btn');
+            modals.forEach(modal => {
+                modal.addEventListener('click', function () {
+                    const field = this.getAttribute('data-field');
+                    const value = this.getAttribute('data-value');
+                    document.querySelector(`#editModal-${field} input[name="${field}"]`).value = value;
+                });
+            });
         });
     </script>
 @endsection
