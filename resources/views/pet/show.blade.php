@@ -100,10 +100,10 @@
                         <div class="info-row">
                             <div>
                                 <span class="info-title">{{ $label }}</span>
-                                <div class="info-value" id="value-{{ $field }}">
+                                <div class="info-value w-75" id="value-{{ $field }}">
                                     @switch($field)
                                         @case('available_for_adoption')
-                                            {{ $pet->$field == 1 ? 'Sim' : ($pet->$field == 0 ? 'Não' : ($pet->$field ?? 'Não informado')) }}
+                                            {{ $pet->$field === 'true' ? 'Sim' : ($pet->$field === 'false' ? 'Não' : ($pet->$field ?? 'Não informado')) }}
                                             @break
                                         @case('gender')
                                             {{ $pet->$field == 'Male' ? 'Macho' : ($pet->$field == 'Female' ? 'Fêmea' : ($pet->$field ?? 'Não informado')) }}
@@ -176,9 +176,9 @@
                                             @case('available_for_adoption')
                                                 <label for="{{ $field }}" class="form-label">{{ $label }}</label>
                                                 <select id="{{ $field }}" name="{{ $field }}" class="form-select">
-                                                    <option selected disabled>{{ $pet->$field == 1 ? 'Sim' : 'Não' }}</option>
-                                                    <option value="1">Sim</option>
-                                                    <option value="0">Não</option>
+                                                    <option selected disabled>{{ $pet->$field === 'true' ? 'Sim' : 'Não' }}</option>
+                                                    <option value="true">Sim</option>
+                                                    <option value="false">Não</option>
                                                 </select>
                                                 @break
                                             @default

@@ -10,6 +10,59 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     
     <style>
+        /* Estilo do Alerta de Sucesso */
+        #success-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40vh; /* Define uma largura fixa */
+            z-index: 1050; /* Mantém o alerta sobre outros elementos */
+            opacity: 0.95; /* Leve transparência para dar um toque mais suave */
+            background-color: white; /* Cor de fundo neutra */
+            color: #333; /* Cor do texto */
+            border: 1px solid #ddd; /* Borda leve */
+            border-radius: 8px; /* Bordas arredondadas */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+            padding: 15px; /* Espaçamento interno */
+            animation: slideDown 0.5s ease-out; /* Animação de entrada */
+        }
+
+        /* Animações de entrada e saída */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+            to {
+                opacity: 0.95;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0.95;
+                transform: translate(-50%, 0);
+            }
+            to {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+        }
+
+        /* Animação de saída (slide para cima) */
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        /* Alinha o botão de fechar */
+        #success-alert .btn-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        
         /* Ícone fixo na tela */
         .fixed-icon {
             position: fixed;
@@ -36,6 +89,12 @@
     @yield('style')
 </head>
 <body>
+    @if(session('success'))
+        <div id="success-alert" class="alert alert-dismissible fade show text-center" role="alert">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <header>
         <!-- Navbar -->
         <a class="fixed-icon" href="@yield('url')">
@@ -58,6 +117,17 @@
         </div>
     </footer>
 
+    <script>
+        // Fechar automaticamente o alerta após 5 segundos
+        const successAlert = document.getElementById('success-alert');
+        if (successAlert) {
+            setTimeout(() => {
+                successAlert.classList.add('animate-slide-up'); // Adiciona a classe de animação
+                setTimeout(() => successAlert.remove(), 500); // Remove o alerta do DOM após a animação
+            }, 5000); // Aguarda 5 segundos antes de começar
+        }
+    </script>
+    
     <!-- CDN do Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

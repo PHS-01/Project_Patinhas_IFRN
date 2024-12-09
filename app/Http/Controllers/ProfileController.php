@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
@@ -24,17 +25,25 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request, User $user): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        // $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+        // if ($request->user()->isDirty('email')) {
+        //     $request->user()->email_verified_at = null;
+        // }
 
-        $request->user()->save();
+        // Filtrar os valores preenchidos na requisição
+        $data = array_filter($request->only([
+            'name', 'email', 'phone_number'
+        ]));
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // Atualizar apenas os campos fornecidos
+        $user->update($data);
+
+        $user->save();
+
+        return Redirect::route('profile.edit')->with('success', 'Usuario editado com sucesso!');
     }
 
     /**

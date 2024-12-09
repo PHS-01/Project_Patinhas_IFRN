@@ -8,17 +8,17 @@ use Illuminate\Support\Facades\Route;
 Route::view('/layouts/app', 'layouts.app');
 Route::view('/layouts/form', 'layouts.form');
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
 Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['guest'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::view('/about', 'about');
 
-Route::prefix('/pet')->controller(PetController::class)->middleware('guest')->group(function () {
+Route::prefix('/pet')->controller(PetController::class)->middleware('auth')->group(function () {
     Route::get('', 'index'); 
     Route::get('/create', 'create')->middleware([IsAdmin::class]); 
     Route::post('/create', 'store')->middleware([IsAdmin::class]); 
@@ -30,7 +30,7 @@ Route::prefix('/pet')->controller(PetController::class)->middleware('guest')->gr
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/{user}', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 

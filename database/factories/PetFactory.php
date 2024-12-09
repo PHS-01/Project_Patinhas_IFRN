@@ -25,7 +25,7 @@ class PetFactory extends Factory
             'health_status' => $this->faker->sentence,
             'size' => $this->faker->randomElement(['Small', 'Medium', 'Large']),
             'gender' => $this->faker->randomElement(['Male', 'Female']),
-            'available_for_adoption' => $this->faker->boolean(90),
+            'available_for_adoption' => $this->faker->randomElement(['true', 'false']),
         ];
     }
 }
