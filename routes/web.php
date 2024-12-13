@@ -18,8 +18,9 @@ Route::get('/dashboard', function () {
 
 Route::view('/about', 'about');
 
+Route::get('/pet', [PetController::class, 'index']); 
+
 Route::prefix('/pet')->controller(PetController::class)->middleware('auth')->group(function () {
-    Route::get('', 'index'); 
     Route::get('/create', 'create')->middleware([IsAdmin::class]); 
     Route::post('/create', 'store')->middleware([IsAdmin::class]); 
     Route::get('/show/{pet}', 'show'); 

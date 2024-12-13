@@ -66,10 +66,41 @@
             left: 5vh; /* Ajuste a distância da borda direita conforme necessário */
             z-index: 10; /* Garantir que o botão fique acima da imagem */
         }
+
+        .fixed-button {
+            position: fixed;
+            top: 20px;    /* Distância do topo */
+            right: 20px;  /* Distância da direita */
+            z-index: 1000; /* Garantir que o botão fique por cima de outros elementos */
+        }
+
+        .fixed-button button {
+            padding: 10px 15px; /* Ajuste o tamanho do botão se necessário */
+        }
+
     </style>
 @endsection
 
 @section('content')
+    @auth   
+        @if (Auth::user()->type == 'admin')
+            <div class="fixed-button">
+                <form action="{{url('/pet/delete/'.$pet->id)}}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-outline-danger">Deletar</button>
+                </form>
+            </div>
+        @else
+            <div class="fixed-button">
+                <form action="#" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-primary-danger">Adotar</button>
+                </form>
+            </div>
+        @endif
+    @endauth
+
     <section style="margin-top: 10%; margin-bottom: 10%;">
         <div class="container position-relative">
             <!-- Card de Informações -->

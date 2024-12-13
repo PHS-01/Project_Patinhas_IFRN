@@ -41,7 +41,7 @@ class PetController extends Controller
             'health_status' => $request->health_status,
             'size' => $request->size,
             'gender' => $request->gender,
-            'available_for_adoption' => true,
+            'available_for_adoption' => 'true',
         ]);
 
         return redirect('/dashboard')->with('success', 'Pet criado com sucesso!');

@@ -3,7 +3,7 @@
 @section('title', 'Cadastro de Pet')
 
 @section('url')
-    {{ back() }}
+    {{url()->previous()}}
 @endsection
 
 @section('style')

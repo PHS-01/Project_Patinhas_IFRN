@@ -138,7 +138,7 @@
                 border-radius: 8px;
                 display: none; /* Inicialmente escondido */
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: stretch;
                 padding: 10px;
                 z-index: 1000;
                 transition: opacity 0.3s ease, transform 0.3s ease;
@@ -150,6 +150,7 @@
                 transform: translateY(0);
             }
 
+            /* Estilo dos itens do menu */
             .floating-menu .menu-item {
                 padding: 10px 20px;
                 text-decoration: none;
@@ -164,16 +165,32 @@
                 color: white;
             }
 
-             /* Botão de fechar no menu */
+            .logout-btn {
+                width: 100%;
+                text-align: center; /* Centraliza o texto */
+            }
+
+            /* Botões de fechar no menu */
             .btn-close-menu {
                 background-color: transparent;
                 border: none;
                 cursor: pointer;
-                transition: color 0.3s ease;
+                transition: transform 0.3s ease, color 0.3s ease;
             }
 
+            /* Efeito de animação ao passar o mouse sobre o ícone de fechar */
+            .btn-close-menu:hover {
+                transform: scale(1.2); /* Aumenta o tamanho ao passar o mouse */
+            }
+
+            .btn-close-menu svg {
+                transition: transform 0.3s ease, fill 0.3s ease;
+            }
+
+            /* Animação de transformação nos ícones de fechar */
             .btn-close-menu:hover svg {
-                color: red;
+                transform: rotate(360deg); /* Rotaciona o ícone */
+                fill: red; /* Muda a cor do ícone */
             }
 
             /* Fundo para fechar ao clicar fora */
@@ -218,26 +235,33 @@
 
         <!-- Menu flutuante -->
         <div class="floating-menu" id="floatingMenu">
-            <div class="d-flex">
-                <form action="#" method="POST">
+            <!-- Linha com ícones nas extremidades -->
+            <div class="d-flex justify-content-between w-100 mb-3">
+                <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn-close-menu">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 -960 960 960" width="25" fill="gray"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 -960 960 960" width="25" fill="gray">
+                            <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+                        </svg>
                     </button>
                 </form>
-                <button class="btn-close-menu ms-auto" onclick="closeMenu()">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 -960 960 960" width="25" fill="gray"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                <button class="btn-close-menu" onclick="closeMenu()">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 -960 960 960" width="25" fill="gray">
+                        <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                    </svg>
                 </button>
             </div>
             <a href="{{ url('/profile') }}" class="menu-item">Perfil</a>
-            @if (Auth::user()->type == 'admin')
-                <a href="#" class="menu-item">Cadastro de Pet</a>
-            @endif
-            <form action="#" method="POST">
+            @auth
+                @if (Auth::user()->type == 'admin')
+                    <a href="#" class="menu-item">Cadastro de Pet</a>
+                @endif
+            @endauth
+            <!-- Botão de Logout -->
+            <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button class="btn btn-outline-danger mt-3" style="width: 100%;">Logout</button>
+                <button class="btn btn-outline-danger logout-btn mt-3">Logout</button>
             </form>
-            <!-- Adicione mais itens conforme necessário -->
         </div>
 
         <!-- Overlay (fundo escuro para fechar ao clicar fora) -->
@@ -296,7 +320,7 @@
             </nav>
         </header>
 
-        <main class="container">
+        <main class="container-fluid">
             @yield('content', 'Aqui vai ficar os conteudos do main')
         </main>
 
