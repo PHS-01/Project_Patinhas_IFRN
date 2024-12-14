@@ -208,6 +208,30 @@
             .overlay.active {
                 display: block;
             }
+
+            /* Ajuste do alerta flutuante para suportar muitos cards */
+            .floating-alert {
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                width: 20rem;
+                max-height: 50vh;
+                background-color: white;
+                color: #333;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                padding: 15px;
+                border-radius: 8px;
+                z-index: 1000;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: flex-start;
+                gap: 10px;
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                transform: translateY(50px);
+                opacity: 0;
+                overflow-y: auto;  /* Permite rolagem quando o conteúdo for maior que o espaço disponível */
+            }
         </style>
 
         @yield('style')
@@ -254,7 +278,8 @@
             <a href="{{ url('/profile') }}" class="menu-item">Perfil</a>
             @auth
                 @if (Auth::user()->type == 'admin')
-                    <a href="#" class="menu-item">Cadastro de Pet</a>
+                    <a href="{{ url('/pet/create') }}" class="menu-item" >Cadastro de Pet</a>
+                    <a href="{{ url('/adoption') }}" class="menu-item" >Controle de Solicitações</a>
                 @endif
             @endauth
             <!-- Botão de Logout -->
@@ -263,6 +288,19 @@
                 <button class="btn btn-outline-danger logout-btn mt-3">Logout</button>
             </form>
         </div>
+
+        <div class="floating-alert hidden" id="alert">
+            <div class="d-flex justify-content-between w-100 mb-3">
+                <h5 class="my-auto">Solicitações de adoção</h5>
+                <button class="btn-close-menu" onclick="closeAlert()">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 -960 960 960" width="25" fill="gray">
+                        <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                    </svg>
+                </button>
+            </div>
+
+            @yield('alert-menu')
+        </div>        
 
         <!-- Overlay (fundo escuro para fechar ao clicar fora) -->
         <div class="overlay" id="overlay" onclick="closeMenu()"></div>
@@ -277,11 +315,6 @@
                             <path d="M180-475q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm180-160q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm240 0q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm180 160q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM266-75q-45 0-75.5-34.5T160-191q0-52 35.5-91t70.5-77q29-31 50-67.5t50-68.5q22-26 51-43t63-17q34 0 63 16t51 42q28 32 49.5 69t50.5 69q35 38 70.5 77t35.5 91q0 47-30.5 81.5T694-75q-54 0-107-9t-107-9q-54 0-107 9t-107 9Z" />
                         </svg>
                     </a>
-
-                    <!-- Botão de toggle para telas pequenas -->
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
 
                     <!-- Links de navegação (alinhados à esquerda) -->
                     <div class="collapse navbar-collapse" id="navbarNav">
@@ -299,23 +332,33 @@
                                 <a id="link-animation" class="nav-link" href="#">Link</a>
                             </li>
                         </ul>
-
-                        <!-- Botões de informações (alinhados à direita) -->
-                        <div class="d-flex">
-                            @guest
-                                <a href="{{ route('login') }}" class="btn btn-outline-secondary me-2">Login</a>
-                                <a href="{{ route('register') }}" class="btn btn-outline-secondary">Cadastrar</a>
-                            @endguest
-                            @auth
-                                <a href="#" style="color: black" id="link-animation" class="link-underline link-underline-opacity-0 ms-2 btn-toggle-menu" onclick="toggleMenu()">
-                                    {{ Auth::user()->name }}
-                                    <svg class="ms-1" xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" width="35" fill="#000000">
-                                        <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z" />
-                                    </svg>
-                                </a>
-                            @endauth
-                        </div>
                     </div>
+                    
+                    <!-- Botões de informações (alinhados à direita) -->
+                    <div class="d-flex">
+                        @guest
+                            <a href="{{ route('login') }}" class="btn btn-outline-secondary me-2">Login</a>
+                            <a href="{{ route('register') }}" class="btn btn-outline-secondary">Cadastrar</a>
+                        @endguest
+                        @auth
+                            @if (Auth::user()->type == 'admin')
+                                <a href="#" style="color: black" id="link-animation" class="link-underline link-underline-opacity-0 ms-2 btn-toggle-menu" onclick="showAlert()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" width="35" fill="#000000"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>
+                                </a>
+                            @endif
+                            <a href="#" style="color: black" id="link-animation" class="link-underline link-underline-opacity-0 ms-2 btn-toggle-menu" onclick="toggleMenu()">
+                                {{ Auth::user()->name }}
+                                <svg class="ms-1" xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" width="35" fill="#000000">
+                                    <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z" />
+                                </svg>
+                            </a>
+                        @endauth
+                    </div>
+
+                    <!-- Botão de toggle para telas pequenas -->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
                 </div>
             </nav>
         </header>
@@ -370,6 +413,18 @@
                 const overlay = document.getElementById('overlay');
                 menu.classList.remove('open');
                 overlay.classList.remove('active');
+            }
+
+            function showAlert() {
+                const alert = document.getElementById('alert');
+                alert.classList.remove('hidden');
+                alert.classList.add('visible');
+            }
+
+            function closeAlert() {
+                const alert = document.getElementById('alert');
+                alert.classList.remove('visible');
+                alert.classList.add('hidden');
             }
         </script>
 

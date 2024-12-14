@@ -93,9 +93,12 @@
             </div>
         @else
             <div class="fixed-button">
-                <form action="#" method="POST">
+                <form action="{{ url('/adoption/create') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-primary-danger">Adotar</button>
+                    <input type="hidden" name="status" value="Pending">
+                    <input type="hidden" name="pet_id" value="{{ $pet->id }}">
+                    <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                    <button type="submit" class="btn btn-outline-primary">Adotar</button>
                 </form>
             </div>
         @endif

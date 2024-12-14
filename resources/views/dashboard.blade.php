@@ -27,46 +27,70 @@
             transform: scale(1.05); /* Eleva levemente a imagem ao passar o mouse */
         }
 
-        /* Botões customizados */
-        .custom-prev,
-        .custom-next {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
-            color: #fff; /* Cor do ícone */
-            border: none;
-            border-radius: 50%;
-            height: 50px; /* Tamanho do botão */
-            width: 50px;
-            cursor: pointer;
-            z-index: 10;
+        /* Card com efeito de elevação */
+        .card-hover {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Efeito de hover para elevação */
+        .card-hover:hover {
+            transform: translateY(-5px);  /* Eleva o card */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);  /* Mais sombra */
+        }
+
+        /* Definindo a altura do card para garantir que ele não ultrapasse o layout */
+        .card {
             display: flex;
-            justify-content: center;
+            flex-direction: row;
             align-items: center;
-            transition: background-color 0.3s ease, transform 0.3s ease;
+            justify-content: space-between;
+            padding: 10px;
+            border-radius: 8px;
         }
 
-        .custom-prev {
-            left: -60px; /* Ajusta a distância para fora do carrossel */
+        /* Ajuste para que a rolagem seja feita dentro do alerta */
+        .floating-alert.visible {
+            transform: translateY(0);
+            opacity: 1;
         }
 
-        .custom-next {
-            right: -60px; /* Ajusta a distância para fora do carrossel */
+        /* Esconde o alerta se não for visível */
+        .floating-alert.hidden {
+            pointer-events: none;
         }
 
-        .custom-prev:hover,
-        .custom-next:hover {
-            background-color: rgba(0, 0, 0, 0.8);
-            transform: translateY(-50%) scale(1.1);
+        /* Texto dentro do card */
+        .card .text {
+            flex: 1;
         }
 
-        /* Ícones */
-        .custom-prev svg,
-        .custom-next svg {
-            width: 20px;
-            height: 20px;
-            fill: #fff;
+        /* Estilo dos ícones no card */
+        .card .actions svg {
+            width: 24px;
+            height: 24px;
+            fill: #333;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        .card .actions svg:hover {
+            fill: #007bff;  /* Muda a cor para azul quando passa o mouse */
+        }
+
+        /* Estilos do título e subtítulo do card */
+        .card .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .card .card-subtitle {
+            font-size: 0.9rem;
+            color: #777;
         }
     </style>
 @endsection
@@ -87,21 +111,27 @@
                         <img src="https://via.placeholder.com/600x300?text=Image+3" class="d-block w-100" alt="Image 3">
                     </div>
                 </div>
-
-                <!-- Botões customizados -->
-                <button class="custom-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z" />
-                    </svg>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="custom-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M10 6l-1.41 1.41L13.17 12l-4.58 4.59L10 18l6-6z" />
-                    </svg>
-                    <span class="visually-hidden">Next</span>
-                </button>
             </div>
         </div>
     </section>
+@endsection
+
+@section('alert-menu')
+    @if ($adoptions->isNotEmpty())
+        @foreach ($adoptions as $adoption)
+            <!-- Card -->
+            <a href="#" class="card d-flex flex-row align-items-center card-hover mb-3 link-underline link-underline-opacity-0">
+                <div class="text p-3">
+                    <h4 class="card-title">{{ $adoption->user->name }}</h4>
+                    <p class="card-subtitle">{{ $adoption->adoption_date }}</p>
+                </div>
+                <div class="actions d-flex p-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 -960 960 960" width="25" fill="#000000"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 -960 960 960" width="25" fill="#000000"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q54 0 104-17.5t92-50.5L228-676q-33 42-50.5 92T160-480q0 134 93 227t227 93Zm252-124q33-42 50.5-92T800-480q0-134-93-227t-227-93q-54 0-104 17.5T284-732l448 448Z"/></svg>
+                </div>
+            </a>
+        @endforeach
+    @else
+        <p><b>Sem solicitações agora</b></p>
+    @endif
 @endsection
