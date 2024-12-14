@@ -66,7 +66,7 @@
             <div class="row">
                 <!-- Primeira Coluna (Menor) - Menu com Checkboxes -->
                 <div class="col-lg-2 col-md-3 col-11 menu-checkbox">
-                    <h3>Filtros</h3>
+                    {{-- <h3>Filtros</h3>
                     <form>
                         <div class="mb-3">
                             <input type="checkbox" id="option1" value="option1">
@@ -76,7 +76,7 @@
                             <input type="checkbox" id="option2" value="option2">
                             <label for="option2">Opção 2</label>
                         </div>
-                    </form>
+                    </form> --}}
                 </div>
         
                 <!-- Segunda Coluna (Maior) - Grid com Cards -->

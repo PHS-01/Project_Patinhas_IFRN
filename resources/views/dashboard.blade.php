@@ -102,13 +102,13 @@
                 <!-- Imagens do Carrossel -->
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="https://via.placeholder.com/600x300?text=Image+1" class="d-block w-100" alt="Image 1">
+                        <img src="{{ asset('images/barnes/barne2.jpeg') }}" class="d-block w-100" alt="Image 1">
                     </div>
                     <div class="carousel-item">
-                        <img src="https://via.placeholder.com/600x300?text=Image+2" class="d-block w-100" alt="Image 2">
+                        <img src="{{ asset('images/barnes/barne3.jpeg') }}" class="d-block w-100" alt="Image 2">
                     </div>
                     <div class="carousel-item">
-                        <img src="https://via.placeholder.com/600x300?text=Image+3" class="d-block w-100" alt="Image 3">
+                        <img src="{{ asset('images/barnes/barne4.jpeg') }}" class="d-block w-100" alt="Image 3">
                     </div>
                 </div>
             </div>

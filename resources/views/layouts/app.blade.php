@@ -371,8 +371,8 @@
             <div class="container">
                 <!-- Logo ou nome do site -->
                 <div class="mb-3">
-                    <h5>Nome do Seu Site</h5>
-                    <p class="mb-0">Seu slogan ou descrição aqui.</p>
+                    <h5>Patinhas do IFRN</h5>
+                    <p class="mb-0">Conectando lares e corações aos nossos amigos de quatro patas.</p>
                 </div>
 
                 <!-- Links de navegação no rodapé -->
@@ -385,7 +385,7 @@
 
                 <!-- Direitos Autorais -->
                 <div>
-                    <p class="mb-0">© 2024 Nome do Seu Site. Todos os direitos reservados.</p>
+                    <p class="mb-0">© 2024 Patinhas do IFRN. Todos os direitos reservados.</p>
                 </div>
             </div>
         </footer>

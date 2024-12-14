@@ -27,6 +27,6 @@ class DatabaseSeeder extends Seeder
 
         User::factory(10)->create();
         Pet::factory(10)->create();
-        Adoption::factory(10)->create();
+        // Adoption::factory(10)->create();
     }
 }
