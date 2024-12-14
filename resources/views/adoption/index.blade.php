@@ -99,10 +99,7 @@
 @section('content')
 
     <div class="fixed-button">
-        <form action="#" method="POST">
-            @csrf
-            <button type="submit" class="btn btn-outline-primary">Gerar Relatorio</button>
-        </form>
+        <a href="{{ url('/report') }}" class="btn btn-outline-primary">Gerar Relatorio</a>
     </div>
 
     <section style="margin-top: 10%; margin-bottom: 10%;">

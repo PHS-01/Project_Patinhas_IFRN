@@ -20,7 +20,11 @@ Route::get('/dashboard', function () {
 
 Route::view('/about', 'about');
 
-Route::get('/pet', [PetController::class, 'index']); 
+Route::get('/pet', [PetController::class, 'index']);
+
+use App\Http\Controllers\ReportController;
+
+Route::get('/report', [ReportController::class, 'generateReport'])->middleware(['auth', IsAdmin::class]);
 
 Route::prefix('/pet')->controller(PetController::class)->middleware('auth')->group(function () {
     Route::get('/create', 'create')->middleware([IsAdmin::class]); 

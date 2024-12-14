@@ -67,3 +67,4 @@ Dados do Usuário Administrador Padrão:
 ---
 
 Agora o projeto está configurado e pronto para ser usado!
+composer require barryvdh/laravel-dompdf
